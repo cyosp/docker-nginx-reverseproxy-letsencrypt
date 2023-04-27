@@ -10,7 +10,7 @@ RUN apk add netcat-openbsd bc curl wget git bash openssl libressl
 
 RUN cd /tmp/ && git clone https://github.com/acmesh-official/acme.sh.git
 
-RUN cd /tmp/acme.sh/ && ./acme.sh --install && rm -rf /tmp/acme.sh
+RUN cd /tmp/acme.sh/ && ./acme.sh --install && ./acme.sh --set-default-ca --server letsencrypt && rm -rf /tmp/acme.sh
 
 WORKDIR /root/.acme.sh/
 

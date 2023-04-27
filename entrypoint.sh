@@ -19,7 +19,7 @@ fi
 
 # Define a default DH params length, and use the parameter if set
 # 1024 length is set for test purposes only, please set it to 2048 at least!
-dhParamLength=1024
+dhParamLength=2048
 if [ -n "$DHPARAM" ]; then
   dhParamLength=$DHPARAM
 fi
@@ -69,13 +69,11 @@ fi
 for service in $services
 do
   host="SERVICE_HOST_$service"
-  proxy="SERVICE_PROXY_$service"
-  if [ -z "${!proxy}" ]; then
-    continue;
-  fi
+  path="SERVICE_PATH_$service"
+  server="SERVICE_SERVER_$service"
   echo "Generating nginx configuration for \"${!host}\"."
   FILE_NAME=$(echo $service | tr '[:upper:]' '[:lower:]').conf
-  DOMAIN=${!host} PROXY=${!proxy} envsubst '$PROXY,$DOMAIN' < /tmp/service.conf.template > "/conf/${FILE_NAME}"
+  DOMAIN=${!host} PATH=${!path} SERVER=${!server} /usr/local/bin/envsubst '$DOMAIN,$PATH,$SERVER' < /tmp/service.conf.template > "/conf/${FILE_NAME}"
 done
 
 # Starting Nginx in daemon mode
@@ -109,7 +107,7 @@ do
     /root/.acme.sh/acme.sh $test --log --installcert $ecc -d ${!host} \
                            --key-file /certs/${!host}/key.pem \
                            --fullchain-file /certs/${!host}/fullchain.pem \
-			   --cert-file /certs/${!host}/cert.pem \
+			                     --cert-file /certs/${!host}/cert.pem \
                            --reloadcmd '/usr/sbin/nginx -s stop && /bin/sleep 5s && /usr/sbin/nginx'
     touch /certs/${!host}/le-ok
     echo "Let's Encrypt certificate for ${!host} installed."
