@@ -1,5 +1,8 @@
 Release notes
 -------------
+##### 1.2.0 (2023-05-17)
+ * Add 301 redirection for root path 
+
 ##### 1.1.0 (2023-05-05)
  * Move ports from 80,443 to 10080,10443
 

@@ -21,7 +21,12 @@ server {
     ssl_dhparam /certs/dhparam.pem;
 
     add_header Access-Control-Allow-Origin *;
+
     location ${PATH} {
+      return 301 https://$host$request_uri/;
+    }
+
+    location ${PATH}/ {
         client_max_body_size 14m;
         proxy_set_header Host $host;
         proxy_set_header X-Forwarded-Proto $scheme;
