@@ -1,5 +1,8 @@
 Release notes
 -------------
+##### 2.1.0 (2023-05-18)
+ * Add environment variable to update HTML base/@href
+
 ##### 2.0.0 (2023-05-18)
  * Change Docker environment variable names
 

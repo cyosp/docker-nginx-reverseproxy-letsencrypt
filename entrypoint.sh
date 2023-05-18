@@ -71,9 +71,14 @@ do
   host="${service}_FROM_HOST"
   path="${service}_AND_PATH"
   server="${service}_TO"
+  withHref="${service}_WITH_HREF"
+  withHrefComment="#"
+  if [ -n "${!withHref}" ]; then
+    withHrefComment=""
+  fi
   echo "Generating nginx configuration for \"${!host}\"."
   FILE_NAME=$(echo $service | tr '[:upper:]' '[:lower:]').conf
-  DOMAIN=${!host} PATH=${!path} SERVER=${!server} /usr/local/bin/envsubst '$DOMAIN,$PATH,$SERVER' < /tmp/service.conf.template > "/conf/${FILE_NAME}"
+  DOMAIN=${!host} PATH=${!path} SERVER=${!server} WITH_HREF_COMMENT=${withHrefComment} WITH_HREF=${!withHref} /usr/local/bin/envsubst '$DOMAIN,$PATH,$SERVER,$WITH_HREF_COMMENT,$WITH_HREF' < /tmp/service.conf.template > "/conf/${FILE_NAME}"
 done
 
 # Starting Nginx in daemon mode
