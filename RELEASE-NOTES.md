@@ -1,5 +1,8 @@
 Release notes
 -------------
+##### 3.0.0 (2023-05-18)
+ * Allow multiple paths per host
+
 ##### 2.1.0 (2023-05-18)
  * Add environment variable to update HTML base/@href
 

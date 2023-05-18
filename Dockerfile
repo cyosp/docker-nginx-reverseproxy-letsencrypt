@@ -18,7 +18,8 @@ RUN mkdir -vp /var/www/html/.well-known/acme-challenge/
 
 COPY entrypoint.sh /root/.acme.sh/
 
-COPY service.conf.template /tmp
+COPY server.conf.template /tmp
+COPY proxy.conf.template /tmp
 
 RUN chmod +x /root/.acme.sh/entrypoint.sh
 
