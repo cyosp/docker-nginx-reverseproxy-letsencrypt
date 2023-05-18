@@ -1,5 +1,8 @@
 Release notes
 -------------
+##### 2.0.0 (2023-05-18)
+ * Change Docker environment variable names
+
 ##### 1.2.0 (2023-05-17)
  * Add 301 redirection for root path 
 

@@ -26,11 +26,11 @@ fi
 
 # Generating self-signed certificates for each host, mandatory for Nginx and LE
 # to execute properly
-services=$(env | grep SERVICE_HOST_ | cut -d "=" -f1 | sed 's/^SERVICE_HOST_//')
+services=$(env | grep _FROM_HOST | cut -d "=" -f1 | sed 's/_FROM_HOST$//')
 for service in $services
 do
-  host="SERVICE_HOST_$service"
-  subj="SERVICE_SUBJ_$service"
+  host="${service}_FROM_HOST"
+  subj="${service}_SUBJ"
 
   if [[ ! -d "/certs/${!host}"  || ! -s "/certs/${!host}/cert.pem" ]]; then
     echo ""
@@ -68,9 +68,9 @@ fi
 # Create nginx configuration
 for service in $services
 do
-  host="SERVICE_HOST_$service"
-  path="SERVICE_PATH_$service"
-  server="SERVICE_SERVER_$service"
+  host="${service}_FROM_HOST"
+  path="${service}_AND_PATH"
+  server="${service}_TO"
   echo "Generating nginx configuration for \"${!host}\"."
   FILE_NAME=$(echo $service | tr '[:upper:]' '[:lower:]').conf
   DOMAIN=${!host} PATH=${!path} SERVER=${!server} /usr/local/bin/envsubst '$DOMAIN,$PATH,$SERVER' < /tmp/service.conf.template > "/conf/${FILE_NAME}"
@@ -86,7 +86,7 @@ fi
 # Request and install a Let's Encrypt certificate for each host
 for service in $services
 do
-  host="SERVICE_HOST_$service"
+  host="${service}_FROM_HOST"
   certSubject=`/usr/bin/openssl x509 -subject -noout -in /certs/${!host}/cert.pem | /usr/bin/cut -c9-999`
   certIssuer=`/usr/bin/openssl x509 -issuer -noout -in /certs/${!host}/cert.pem | /usr/bin/cut -c8-999`
   # Checking whether the existent certificate is self-signed or not

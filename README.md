@@ -37,10 +37,8 @@ The following variables can be set:
 * `KEYLENGTH`: defines the key length of your Let's Encrypt certificates (1024, 2048, 4096, ec-256, ec-384, ec-521 [not supported by LE yet], etc). Default is set to 4096.
 * `EMAIL`: e-mail address used to register with ZeroSSL ([https://github.com/acmesh-official/acme.sh/wiki/ZeroSSL.com-CA](acme.sh wiki))
 * `DHPARAM`: defines the Diffie-Hellman parameters key length. Default is set to 2048. *Be aware that it can take much time, way more than just a couple minutes.*
-* `SERVICE_HOST_x`/`SERVICE_PROXY_x`: the domain you want certificates for. Set one per domain: `SERVICE_HOST_1`, `SERVICE_HOST_2`, `SERVICE_PROXY_WEBSITE`, `SERVICE_PROXY_API`, etc.
-* `SERVICE_SUBJ_x`: the self-signed certificate subject of `SERVICE_HOST_x`. The expected format is the following: `/C=Country code/ST=State/L=City/O=Company/OU=Organization/CN=your.domain.tld`. It's not really useful, but still, it's there. Use `SERVICE_SUBJ_1` for `SERVICE_HOST_1`, etc.
-  
-Note regarding `SERVICE_PROXY_x`: these environment variables will automatically generate an nginx conf file named `x.conf` (`x` being lowercase'd), based on `service.conf.template`.
+* `x_FROM_HOST`: the domain you want certificates for. Set one per domain: `WEBSITE_FROM_HOST`, `API_FROM_HOST`, etc.
+* `x_SUBJ`: the self-signed certificate subject of `SERVICE_HOST_x`. The expected format is the following: `/C=Country code/ST=State/L=City/O=Company/OU=Organization/CN=your.domain.tld`. It's not really useful, but still, it's there. Use `SERVICE_SUBJ_1` for `SERVICE_HOST_1`, etc.
 
 ### Docker cli
 
@@ -54,10 +52,8 @@ docker run \
   -e KEYLENGTH=ec-384 \
   -e EMAIL=johndoe@gmail.com \
   -e DHPARAM=4096 \
-  -e SERVICE_HOST_1=www.mydomain.com \
-  -e SERVICE_HOST_2=subdomain.mydomain.com \
-  -e SERVICE_PROXY_WEBSITE=website.mydomain.com \
-  -e SERVICE_PROXY_API=api.mydomain.com \
+  -e WEBSITE_FROM_HOST=website.mydomain.com \
+  -e WEBSITE_AND_PATH=/path \
   --name reverse-proxy \
   -t -d
 ```
@@ -71,13 +67,11 @@ services:
     container_name: "proxy"
     image: bh42/nginx-reverseproxy-letsencrypt:latest
     environment:
-      - KEYLENGTH=ec-384
-      - EMAIL=johndoe@gmail.com
-      - DHPARAM=4096
-      - SERVICE_HOST_1=www.mydomain.com
-      - SERVICE_HOST_2=subdomain.mydomain.com
-      - SERVICE_PROXY_WEBSITE=website.mydomain.com
-      - SERVICE_PROXY_API=api.mydomain.com
+      - KEYLENGTH: ec-384
+      - EMAIL: johndoe@gmail.com
+      - DHPARAM: 4096
+      - WEBSITE_FROM_HOST: website.mydomain.com
+      - WEBSITE_AND_PATH: /path
     restart: unless-stopped
     tty: true
     ports:
@@ -93,4 +87,4 @@ services:
 **Since the certificates will be stored in `/certs`, be sure to write your Nginx configuration file(s) accordingly!**
 
 The configuration files in `/conf` will be placed in `/etc/nginx/conf.d` in the container.  
-If you do not use any `SERVICE_PROXY_x` environment variables, you can set the `conf` volume in read only (`:ro`) mode.
+If you do not use any `x_FROM_HOST` environment variables, you can set the `conf` volume in read only (`:ro`) mode.
