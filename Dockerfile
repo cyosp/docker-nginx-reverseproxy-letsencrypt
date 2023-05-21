@@ -19,7 +19,8 @@ RUN mkdir -vp /var/www/html/.well-known/acme-challenge/
 COPY entrypoint.sh /root/.acme.sh/
 
 COPY server.conf.template /tmp
-COPY proxy.conf.template /tmp
+COPY proxy-301.conf.template /tmp
+COPY proxy-reverse.conf.template /tmp
 
 RUN chmod +x /root/.acme.sh/entrypoint.sh
 

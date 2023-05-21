@@ -1,5 +1,8 @@
 Release notes
 -------------
+##### 3.0.1 (2023-05-21)
+ * Avoid 301 redirection when path is empty
+
 ##### 3.0.0 (2023-05-18)
  * Allow multiple paths per host
 
