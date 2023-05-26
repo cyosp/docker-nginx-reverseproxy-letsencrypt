@@ -1,5 +1,8 @@
 Release notes
 -------------
+##### 3.1.0 (2023-05-26)
+ * Add WebDAV MOVE support
+
 ##### 3.0.1 (2023-05-21)
  * Avoid 301 redirection when path is empty
 

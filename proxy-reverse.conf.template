@@ -1,4 +1,13 @@
 location ${PATH}/ {
+   # Allow WebDAV MOVE
+   # Destination header is to locate file to move
+   # URL path is the new file path on server
+   set $dest $http_destination;
+   if ($http_destination ~ "^https://${DOMAIN}${PATH}(/.+)") {
+       set $dest $1;
+   }
+   proxy_set_header Destination $dest;
+
     client_max_body_size 14m;
     proxy_set_header Host $host;
     proxy_set_header X-Forwarded-Proto $scheme;

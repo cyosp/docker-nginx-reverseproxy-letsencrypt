@@ -83,7 +83,7 @@ do
   if [ "${!path}" != "" ]; then
       PATH=${!path} /usr/local/bin/envsubst '$PATH' < /tmp/proxy-301.conf.template > "/conf/include/${!host}_$(echo ${configuration} | tr '[:upper:]' '[:lower:]')_301.conf"
   fi
-  PATH=${!path} SERVER=${!server} WITH_HREF_COMMENT=${withHrefComment} WITH_HREF=${!withHref} /usr/local/bin/envsubst '$PATH,$SERVER,$WITH_HREF_COMMENT,$WITH_HREF' < /tmp/proxy-reverse.conf.template > "/conf/include/${!host}_$(echo ${configuration} | tr '[:upper:]' '[:lower:]')_reverse.conf"
+  DOMAIN=${!host} PATH=${!path} SERVER=${!server} WITH_HREF_COMMENT=${withHrefComment} WITH_HREF=${!withHref} /usr/local/bin/envsubst '$DOMAIN,$PATH,$SERVER,$WITH_HREF_COMMENT,$WITH_HREF' < /tmp/proxy-reverse.conf.template > "/conf/include/${!host}_$(echo ${configuration} | tr '[:upper:]' '[:lower:]')_reverse.conf"
 done
 
 # Starting Nginx in daemon mode
