@@ -1,5 +1,8 @@
 Release notes
 -------------
+##### 3.2.0 (2023-08-10)
+ * Improve clients compatibility
+
 ##### 3.1.0 (2023-05-26)
  * Add WebDAV MOVE support
 
