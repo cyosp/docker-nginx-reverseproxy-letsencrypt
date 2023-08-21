@@ -1,5 +1,6 @@
 server {
-    listen 10443 ssl http2;
+    listen 10443 ssl;
+    http2 on;
     server_name ${DOMAIN};
     server_tokens off;
     ssl_certificate /certs/${DOMAIN}/fullchain.pem;
