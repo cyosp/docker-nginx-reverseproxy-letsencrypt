@@ -8,6 +8,8 @@ location ${PATH}/ {
    }
    proxy_set_header Destination $dest;
 
+   ${BASIC_AUTH}
+
     client_max_body_size 14m;
     proxy_set_header Host $host;
     proxy_set_header X-Forwarded-Proto $scheme;

@@ -72,18 +72,32 @@ do
   path="${configuration}_AND_PATH"
   server="${configuration}_TO"
   withHref="${configuration}_WITH_HREF"
+
   withHrefComment="#"
   if [ -n "${!withHref}" ]; then
     withHrefComment=""
   fi
+
+  HOST_LOWER_CASE=$(echo ${!host} | tr '[:upper:]' '[:lower:]')
+  CONFIGURATION_LOWER_CASE=$(echo ${configuration} | tr '[:upper:]' '[:lower:]')
+  BASE_CONFIG_FILE_NAME=${HOST_LOWER_CASE}_${CONFIGURATION_LOWER_CASE}
+
+  basicAuthUserNameAndPassword="${configuration}_BASIC_AUTH_USERNAME_AND_PASSWORD"
+  basicAuthUserNameAndPassword=${!basicAuthUserNameAndPassword}
+  basicAuthConfigurationValue="# No basic authentification"
+    if [ -n "${basicAuthUserNameAndPassword}" ]; then
+      HTPASSWORD_FILE="/conf/$BASE_CONFIG_FILE_NAME.htpasswd"
+      echo "${basicAuthUserNameAndPassword}" > $HTPASSWORD_FILE
+      basicAuthConfigurationValue="auth_basic_user_file $HTPASSWORD_FILE;"
+    fi
+
   echo "Generating nginx configuration for host: ${!host}"
-  FILE_NAME=$(echo ${!host} | tr '[:upper:]' '[:lower:]').conf
-  DOMAIN=${!host} /usr/local/bin/envsubst '$DOMAIN' < /tmp/server.conf.template > "/conf/${FILE_NAME}"
+  DOMAIN=${!host} /usr/local/bin/envsubst '$DOMAIN' < /tmp/server.conf.template > "/conf/$HOST_LOWER_CASE.conf"
   mkdir -p "/conf/include"
   if [ "${!path}" != "" ]; then
-      PATH=${!path} /usr/local/bin/envsubst '$PATH' < /tmp/proxy-301.conf.template > "/conf/include/${!host}_$(echo ${configuration} | tr '[:upper:]' '[:lower:]')_301.conf"
+      PATH=${!path} /usr/local/bin/envsubst '$PATH' < /tmp/proxy-301.conf.template > "/conf/include/${BASE_CONFIG_FILE_NAME}_301.conf"
   fi
-  DOMAIN=${!host} PATH=${!path} SERVER=${!server} WITH_HREF_COMMENT=${withHrefComment} WITH_HREF=${!withHref} /usr/local/bin/envsubst '$DOMAIN,$PATH,$SERVER,$WITH_HREF_COMMENT,$WITH_HREF' < /tmp/proxy-reverse.conf.template > "/conf/include/${!host}_$(echo ${configuration} | tr '[:upper:]' '[:lower:]')_reverse.conf"
+  DOMAIN=${!host} PATH=${!path} SERVER=${!server} WITH_HREF_COMMENT=${withHrefComment} WITH_HREF=${!withHref} BASIC_AUTH=${basicAuthConfigurationValue} /usr/local/bin/envsubst '$DOMAIN,$PATH,$SERVER,$WITH_HREF_COMMENT,$WITH_HREF,$BASIC_AUTH' < /tmp/proxy-reverse.conf.template > "/conf/include/${BASE_CONFIG_FILE_NAME}_reverse.conf"
 done
 
 # Starting Nginx in daemon mode

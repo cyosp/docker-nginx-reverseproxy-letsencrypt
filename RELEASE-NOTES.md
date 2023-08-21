@@ -1,5 +1,8 @@
 Release notes
 -------------
+##### 3.3.0 (2023-08-21)
+ * Add basic authentication configurable capabilities
+
 ##### 3.2.0 (2023-08-10)
  * Improve clients compatibility
 
