@@ -1,5 +1,8 @@
 Release notes
 -------------
+##### 3.3.2 (2023-08-21)
+ * Fix basic authentication
+
 ##### 3.3.1 (2023-08-21)
  * Remove http2 warn according to Nginx 1.25.1
 

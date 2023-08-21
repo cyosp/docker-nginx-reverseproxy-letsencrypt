@@ -88,7 +88,7 @@ do
     if [ -n "${basicAuthUserNameAndPassword}" ]; then
       HTPASSWORD_FILE="/conf/$BASE_CONFIG_FILE_NAME.htpasswd"
       echo "${basicAuthUserNameAndPassword}" > $HTPASSWORD_FILE
-      basicAuthConfigurationValue="auth_basic_user_file $HTPASSWORD_FILE;"
+      basicAuthConfigurationValue="auth_basic 'Restricted area'; auth_basic_user_file $HTPASSWORD_FILE;"
     fi
 
   echo "Generating nginx configuration for host: ${!host}"

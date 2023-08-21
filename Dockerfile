@@ -1,5 +1,7 @@
 FROM nginx:1.25.2-alpine
 
+RUN sed -i "s/user  nginx;/user root;/" /etc/nginx/nginx.conf
+
 LABEL maintainer="Matthieu Bargheon <bh@bhtech.io>"
 LABEL git="https://github.com/bh42/docker-nginx-reverseproxy-letsencrypt"
 LABEL version="0.1"
