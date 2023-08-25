@@ -40,7 +40,7 @@ do
       certSubj=${!subj}
     fi
     mkdir -vp /certs/${!host}
-    /usr/bin/openssl genrsa -out /certs/${!host}/key.pem 1024
+    /usr/bin/openssl genrsa -out /certs/${!host}/key.pem 2048
     /usr/bin/openssl req -new -key /certs/${!host}/key.pem \
             -out /certs/${!host}/cert.csr \
             -subj "$certSubj"
@@ -111,31 +111,36 @@ fi
 for configuration in $configurations
 do
   host="${configuration}_FROM_HOST"
-  certSubject=`/usr/bin/openssl x509 -subject -noout -in /certs/${!host}/cert.pem | /usr/bin/cut -c9-999`
-  certIssuer=`/usr/bin/openssl x509 -issuer -noout -in /certs/${!host}/cert.pem | /usr/bin/cut -c8-999`
-  # Checking whether the existent certificate is self-signed or not
-  # If self-signed: remove the le-ok file
-  if [[ -e /certs/${!host}/le-ok && "$certSubject" = "$certIssuer" ]]; then
-    rm /certs/${!host}/le-ok
-  fi
-  # Replace the existing self-signed certificate with a LE one
-  if [ ! -e /certs/${!host}/le-ok ]; then
-    ecc=""
-    keyLengthTest=`echo "$keyLength" | /usr/bin/cut -c1-2`
-    if [ "$keyLengthTest" = "ec" ]; then
-      ecc="--ecc"
+  keepSelfSignedCertificate="${configuration}_KEEP_SELF_SIGNED_CERTIFICATE"
+  if [ "${!keepSelfSignedCertificate}" == "true" ]; then
+    echo "Keep self signed certificate for ${!host}"
+  else
+    certSubject=`/usr/bin/openssl x509 -subject -noout -in /certs/${!host}/cert.pem | /usr/bin/cut -c9-999`
+    certIssuer=`/usr/bin/openssl x509 -issuer -noout -in /certs/${!host}/cert.pem | /usr/bin/cut -c8-999`
+    # Checking whether the existent certificate is self-signed or not
+    # If self-signed: remove the le-ok file
+    if [[ -e /certs/${!host}/le-ok && "$certSubject" = "$certIssuer" ]]; then
+      rm /certs/${!host}/le-ok
     fi
-    echo ""
-    echo "Requesting a certificate from Let's Encrypt certificate for ${!host}..."
-    /root/.acme.sh/acme.sh $test --log --issue -w /var/www/html/ -d ${!host} -k $keyLength
-    /root/.acme.sh/acme.sh $test --log --installcert $ecc -d ${!host} \
-                           --key-file /certs/${!host}/key.pem \
-                           --fullchain-file /certs/${!host}/fullchain.pem \
-			                     --cert-file /certs/${!host}/cert.pem \
-                           --reloadcmd '/usr/sbin/nginx -s stop && /bin/sleep 5s && /usr/sbin/nginx'
-    touch /certs/${!host}/le-ok
-    echo "Let's Encrypt certificate for ${!host} installed."
-    echo ""
+    # Replace the existing self-signed certificate with a LE one
+    if [ ! -e /certs/${!host}/le-ok ]; then
+      ecc=""
+      keyLengthTest=`echo "$keyLength" | /usr/bin/cut -c1-2`
+      if [ "$keyLengthTest" = "ec" ]; then
+        ecc="--ecc"
+      fi
+      echo ""
+      echo "Requesting a certificate from Let's Encrypt certificate for ${!host}..."
+      /root/.acme.sh/acme.sh $test --log --issue -w /var/www/html/ -d ${!host} -k $keyLength
+      /root/.acme.sh/acme.sh $test --log --installcert $ecc -d ${!host} \
+                             --key-file /certs/${!host}/key.pem \
+                             --fullchain-file /certs/${!host}/fullchain.pem \
+                             --cert-file /certs/${!host}/cert.pem \
+                             --reloadcmd '/usr/sbin/nginx -s stop && /bin/sleep 5s && /usr/sbin/nginx'
+      touch /certs/${!host}/le-ok
+      echo "Let's Encrypt certificate for ${!host} installed."
+      echo ""
+    fi
   fi
 done
 

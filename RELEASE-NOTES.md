@@ -1,5 +1,8 @@
 Release notes
 -------------
+##### 3.4.0 (2023-08-25)
+ * Add possibility to keep self signed certificate
+
 ##### 3.3.2 (2023-08-21)
  * Fix basic authentication
 
